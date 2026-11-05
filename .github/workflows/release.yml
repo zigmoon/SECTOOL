@@ -13,18 +13,18 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: windows-latest
+          - platform: windows-latest
             args: ''
-          - os: macos-latest
+          - platform: macos-latest
             args: '--target universal-apple-darwin'
-          - os: ubuntu-22.04
+          - platform: ubuntu-22.04
             args: ''
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v4
 
       - name: Dépendances Linux
-        if: matrix.os == 'ubuntu-22.04'
+        if: matrix.platform == 'ubuntu-22.04'
         run: |
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf nftables
@@ -35,21 +35,35 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@stable
         with:
-          targets: ${{ matrix.os == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
 
       - uses: swatinem/rust-cache@v2
 
-      - name: Installer le front
-        run: npm --prefix app ci || npm --prefix app install
+      - name: Installer les dépendances
+        run: |
+          npm ci
+          npm --prefix app ci
 
       - name: Compiler et publier
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          projectPath: .
-          tauriScript: npx --prefix app tauri
           tagName: ${{ github.ref_name }}
           releaseName: 'SECTOOL ${{ github.ref_name }}'
-          releaseDraft: true
+          releaseBody: |
+            ### Téléchargements
+
+            | Système | Fichier |
+            |---|---|
+            | Windows | `.msi` ou `-setup.exe` |
+            | macOS (Intel + Apple Silicon) | `.dmg` |
+            | Linux Debian/Ubuntu | `.deb` |
+            | Linux universel | `.AppImage` |
+
+            Le moteur réseau fonctionne sans droits particuliers. Les règles de pare-feu ne sont
+            appliquées qu'après validation, et l'autorisation du système est demandée à ce moment-là.
+          releaseDraft: false
+          prerelease: false
+          tauriScript: npm run tauri
           args: ${{ matrix.args }}

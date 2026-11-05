@@ -1,69 +1,117 @@
 # SECTOOL
 
-Voir **tout son réseau en temps réel** et le contrôler : appareils (box, ordinateurs, téléphones, imprimantes, objets connectés), connexions de la machine, trafic, et un **petit pare-feu logiciel** avec aperçu avant application.
+[![Build](https://github.com/zigmoon/SECTOOL/actions/workflows/release.yml/badge.svg)](https://github.com/zigmoon/SECTOOL/actions/workflows/release.yml)
+[![Version](https://img.shields.io/github/v/release/zigmoon/SECTOOL?display_name=tag&sort=semver)](https://github.com/zigmoon/SECTOOL/releases/latest)
+[![Licence](https://img.shields.io/badge/licence-AGPL--3.0--or--later-blue)](LICENSE)
 
-Application de bureau pour **Windows, macOS et Linux** : Rust (moteur) + Tauri 2 (fenêtre) + Astro / Vite (interface).
+**Voir tout son réseau en temps réel, et le contrôler.**
+SECTOOL affiche les appareils de votre réseau local (box, ordinateurs, téléphones, imprimantes, télévisions, objets connectés), les connexions de votre machine, le débit — et propose un petit **pare-feu logiciel** avec aperçu avant application.
+
+Rust pour le moteur, [Tauri 2](https://tauri.app) pour la fenêtre, [Astro](https://astro.build) + Vite pour l'interface.
+
+![Carte du réseau](docs/capture-reseau.png)
+
+## Télécharger
+
+> Dernière version : **[github.com/zigmoon/SECTOOL/releases/latest](https://github.com/zigmoon/SECTOOL/releases/latest)**
+
+| Système | Fichier à prendre | Téléchargement |
+|---|---|---|
+| **Windows** 10/11 (64 bits) | installateur `.msi` | [Télécharger](https://github.com/zigmoon/SECTOOL/releases/latest) |
+| **Windows** 10/11 (64 bits) | installateur `-setup.exe` | [Télécharger](https://github.com/zigmoon/SECTOOL/releases/latest) |
+| **macOS** 10.15+ (Intel et Apple Silicon) | `.dmg` universel | [Télécharger](https://github.com/zigmoon/SECTOOL/releases/latest) |
+| **Linux** Debian / Ubuntu | `.deb` | [Télécharger](https://github.com/zigmoon/SECTOOL/releases/latest) |
+| **Linux** toutes distributions | `.AppImage` | [Télécharger](https://github.com/zigmoon/SECTOOL/releases/latest) |
+
+Les binaires sont construits automatiquement par GitHub Actions pour chaque système
+(voir [`.github/workflows/release.yml`](.github/workflows/release.yml)). Aucune signature
+commerciale n'est achetée : Windows SmartScreen et macOS Gatekeeper peuvent afficher un
+avertissement au premier lancement.
 
 ## Ce que fait SECTOOL
 
 | Section | Contenu |
 |---|---|
-| Carte du réseau | La box au centre, chaque appareil avec son icône, son statut, et un bouton « Bloquer » |
-| Appareils | Tableau : IP, MAC, constructeur, ports ouverts, latence, recherche, export JSON |
-| Connexions | Sockets TCP/UDP de la machine avec le programme, la zone (Internet / local) et l'état |
-| Pare-feu | Règles bloquer/autoriser, aperçu exact des commandes, application, retrait complet |
-| Journal | Nouvel appareil, appareil hors ligne, changement d'adresse MAC (usurpation possible) |
+| **Carte du réseau** | La box au centre, chaque appareil avec son icône et son statut. Un clic ouvre sa fiche, avec un bouton pour le bloquer. |
+| **Appareils** | Tableau complet : IP, MAC, constructeur, ports ouverts, latence, recherche, export JSON. |
+| **Connexions** | Sockets TCP/UDP de la machine : programme, adresse distante, zone (Internet ou local), état. |
+| **Pare-feu** | Règles bloquer/autoriser, aperçu exact des commandes, application, retrait complet. |
+| **Journal** | Nouvel appareil, retour en ligne, appareil hors ligne, changement d'adresse MAC. |
 
-La découverte n'utilise **aucun pilote ni capture de paquets** : table ARP, sondes TCP/UDP classiques et mDNS. Elle fonctionne sans droits administrateur.
+![Pare-feu](docs/capture-pare-feu.png)
 
-## Pare-feu : sécurité
+### Connexions et trafic
 
-- Les règles sont enregistrées dans `firewall.json` et **ne touchent le système qu'après « Appliquer »**.
-- Un aperçu montre les commandes exactes avant exécution.
-- Windows : `netsh advfirewall`, règles nommées `SECTOOL|…`. Linux : table `nftables` dédiée `inet sectool`. macOS : ancre `pf` dédiée `sectool`.
-- SECTOOL ne modifie **jamais** les règles qui ne lui appartiennent pas. « Tout retirer » supprime uniquement les siennes.
-- L'application demande l'autorisation administrateur (UAC, `pkexec`/`sudo`, mot de passe macOS) uniquement au moment d'appliquer.
-- Surveillez votre réseau uniquement : n'utilisez SECTOOL que sur un réseau qui vous appartient ou que vous administrez.
+![Connexions](docs/capture-connexions.png)
 
-## Lancer en développement
+## Comment il voit le réseau
+
+Aucun pilote, aucune capture de paquets, aucun droit particulier pour l'observation :
+
+1. **Table ARP** du système (les voisins déjà connus).
+2. **Réveil ARP** par de petits datagrammes UDP, pour découvrir les appareils silencieux.
+3. **Sondes TCP** sur quelques ports courants : présence, latence, services réellement ouverts.
+4. **mDNS / Bonjour** : noms conviviaux et modèles annoncés (AirPlay, imprimantes, Chromecast…).
+5. **DNS inverse** pour les appareils encore anonymes.
+
+Les adresses MAC sont traduites en constructeur grâce à une table embarquée (box françaises,
+Apple, Samsung, Xiaomi, Synology, Raspberry Pi, Espressif, imprimantes…), sans aucun appel réseau.
+
+## Le pare-feu
+
+Le pare-feu est **volontairement prudent** :
+
+- Les règles sont d'abord enregistrées dans `firewall.json` ; elles **ne touchent pas** le système.
+- Un bouton **« Aperçu des commandes »** montre exactement ce qui sera exécuté.
+- Seul « Appliquer » agit, et l'autorisation du système est demandée à ce moment-là
+  (UAC sous Windows, `pkexec`/`sudo` sous Linux, mot de passe macOS).
+- Moteurs utilisés : `netsh advfirewall` (Windows), `nftables` table `inet sectool` (Linux),
+  ancre `pf` dédiée (macOS).
+- SECTOOL ne modifie **jamais** les règles qui ne lui appartiennent pas ; « Tout retirer »
+  supprime uniquement les siennes (préfixe `SECTOOL|`).
+
+> Utilisez SECTOOL uniquement sur un réseau qui vous appartient ou que vous administrez.
+
+## Ligne de commande
+
+Le moteur fonctionne aussi sans interface :
+
+```bash
+cargo run -p sectool-cli -- scan            # un balayage, tableau des appareils
+cargo run -p sectool-cli -- watch           # en boucle, toutes les 5 s
+cargo run -p sectool-cli -- scan --json     # sortie JSON
+cargo run -p sectool-cli -- connections     # sockets de la machine
+cargo run -p sectool-cli -- preview         # commandes de pare-feu, sans agir
+cargo run -p sectool-cli -- apply --yes     # applique les règles enregistrées
+```
+
+## Développer
 
 Prérequis : Rust stable, Node 20+, et sous Linux `libwebkit2gtk-4.1-dev`.
 
 ```bash
+npm install
 npm --prefix app install
-npm --prefix app run dev        # interface seule dans le navigateur (données de démonstration)
-cargo install tauri-cli --version "^2"
-cargo tauri dev                 # application complète
+
+npm run app:dev      # interface seule dans le navigateur (données de démonstration)
+npm run dev          # application de bureau complète (Tauri)
+npm run build        # installeurs pour la plateforme courante
 ```
 
-Ligne de commande (sans interface) :
-
-```bash
-cargo run -p sectool-cli -- scan
-cargo run -p sectool-cli -- watch --interval 3
-cargo run -p sectool-cli -- connections
-cargo run -p sectool-cli -- preview
-```
-
-## Construire les installeurs
-
-```bash
-cargo tauri build
-```
-
-Le workflow `.github/workflows/release.yml` produit `.msi`/`.exe`, `.dmg` et `.deb`/`.AppImage` à chaque tag `vX.Y.Z`.
+`.github/workflows/release.yml` produit Windows, macOS et Linux à chaque tag `vX.Y.Z`.
 
 ## Structure
 
 ```
-crates/sectool-core      types, règles, base de constructeurs (OUI)
-crates/sectool-net       ARP, sondes, mDNS, sockets, trafic
-crates/sectool-firewall  netsh / nftables / pf
-crates/sectool-cli       commande `sectool`
-src-tauri                application de bureau (Tauri)
-app                      interface Astro + Vite
+crates/sectool-core       types, règles, table des constructeurs, réglages
+crates/sectool-net        ARP, sondes TCP/UDP, mDNS, sockets, débit
+crates/sectool-firewall   netsh / nftables / pf, aperçu et application
+crates/sectool-cli        commande `sectool`
+src-tauri                 application de bureau (Tauri 2)
+app                       interface Astro + Vite (mode démonstration sans Tauri)
+docs                      captures d'écran
 ```
 
 ## Licence
 
-AGPL-3.0-or-later. Icônes : [Lucide](https://lucide.dev) (ISC).
+[AGPL-3.0-or-later](LICENSE). Icônes : [Lucide](https://lucide.dev) (licence ISC).

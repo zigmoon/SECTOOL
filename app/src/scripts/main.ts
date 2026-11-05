@@ -25,48 +25,82 @@ let filterDevices = '';
 let filterConns = '';
 let scopeFilter: 'all' | 'internet' | 'lan' | 'listen' = 'all';
 let renderKey = '';
+let mapKey = '';
 
 const kindMeta = (k: string) => KIND_META[k] ?? KIND_META.unknown;
 
 // ───────────────────────── En-tête ─────────────────────────────────
 
+const STAT_TILES: { icon: IconName; label: string }[] = [
+  { icon: 'wifi', label: 'appareils en ligne' },
+  { icon: 'globe', label: 'connexions Internet' },
+  { icon: 'eye', label: 'ports en écoute' },
+  { icon: 'shieldOk', label: 'appareils bloqués' },
+];
+
 function renderNav(): void {
-  const s = snap;
-  $('nav').innerHTML = NAV.map((n) => {
-    let count = '';
-    if (s) {
-      if (n.id === 'devices') count = `<span class="count">${s.stats.devicesOnline}/${s.stats.devices}</span>`;
-      if (n.id === 'connections') count = `<span class="count">${s.stats.connections}</span>`;
-      if (n.id === 'firewall') count = `<span class="count">${rules.filter((r) => r.enabled).length}</span>`;
-      if (n.id === 'log' && s.stats.alerts) {
-        count = `<span class="count ${s.stats.alertsCritical ? 'alert' : ''}">${s.stats.alerts}</span>`;
+  const nav = $('nav');
+  if (!nav.dataset.built) {
+    nav.innerHTML = NAV.map((n) =>
+      `<button class="nav-item" data-view="${n.id}">${icon(n.icon, 18)}<span>${n.label}</span><span class="count" hidden></span></button>`).join('');
+    nav.dataset.built = '1';
+  }
+  const st = snap?.stats;
+  NAV.forEach((n, index) => {
+    const btn = nav.children[index] as HTMLElement;
+    btn.classList.toggle('on', view === n.id);
+    const badge = btn.querySelector('.count') as HTMLElement;
+    let text = '';
+    let alert = false;
+    if (st) {
+      if (n.id === 'devices') text = `${st.devicesOnline}/${st.devices}`;
+      if (n.id === 'connections') text = String(st.connections);
+      if (n.id === 'firewall') text = String(rules.filter((r) => r.enabled).length);
+      if (n.id === 'log' && st.alerts) {
+        text = String(st.alerts);
+        alert = st.alertsCritical > 0;
       }
     }
-    return `<button class="nav-item ${view === n.id ? 'on' : ''}" data-view="${n.id}">${icon(n.icon, 18)}<span>${n.label}</span>${count}</button>`;
-  }).join('');
+    if (badge.textContent !== text) badge.textContent = text;
+    if (badge.hidden !== (text === '')) badge.hidden = text === '';
+    badge.classList.toggle('alert', alert);
+  });
 }
 
 function renderTop(): void {
   if (!snap) return;
   const st = snap.stats;
-  $('stats').innerHTML = [
-    ['wifi', st.devicesOnline, 'appareils en ligne'],
-    ['globe', st.connectionsInternet, 'connexions Internet'],
-    ['eye', st.listening, 'ports en écoute'],
-    [st.blockedDevices ? 'ban' : 'shieldOk', st.blockedDevices, 'appareils bloqués'],
-  ].map(([ic, n, label]) => `<div class="stat"><b>${n}</b><span>${icon(ic as IconName, 15)}${label}</span></div>`).join('');
+  const stats = $('stats');
+  if (!stats.dataset.built) {
+    stats.innerHTML = STAT_TILES.map((t) =>
+      `<div class="stat"><b>0</b><span>${icon(t.icon, 15)}${t.label}</span></div>`).join('');
+    stats.dataset.built = '1';
+  }
+  const values = [st.devicesOnline, st.connectionsInternet, st.listening, st.blockedDevices];
+  values.forEach((value, index) => {
+    const cell = stats.children[index]?.querySelector('b');
+    if (cell && cell.textContent !== String(value)) cell.textContent = String(value);
+  });
 
   $('rx').innerHTML = `${icon('down', 16)} ${bps(snap.traffic.rxBps)}`;
   $('tx').innerHTML = `${icon('up', 16)} ${bps(snap.traffic.txBps)}`;
   $('ver').textContent = `v${snap.version}`;
   $('host').textContent = `${snap.hostname} · ${snap.localIp ?? '—'}`;
-  $('btn-scan').innerHTML = icon('refresh', 16);
-  $('btn-scan').classList.toggle('spin', snap.scanning);
+  const scanBtn = $('btn-scan');
+  if (!scanBtn.dataset.ready) {
+    scanBtn.innerHTML = icon('refresh', 16);
+    scanBtn.dataset.ready = '1';
+  }
+  scanBtn.classList.toggle('spin', snap.scanning);
 
   const fw = snap.firewall;
   const pill = $('fw-pill');
-  pill.className = `pill ${fw.readOnly ? 'warn' : 'ok'}`;
-  pill.innerHTML = `${icon(fw.readOnly ? 'shieldAlert' : 'shieldOk', 16)}<span>${fw.readOnly ? 'Lecture seule' : 'Administrateur'}</span>`;
+  const pillHtml = `${icon(fw.readOnly ? 'shieldAlert' : 'shieldOk', 16)}<span>${fw.readOnly ? 'Lecture seule' : 'Administrateur'}</span>`;
+  if (pill.dataset.key !== pillHtml) {
+    pill.dataset.key = pillHtml;
+    pill.className = `pill ${fw.readOnly ? 'warn' : 'ok'}`;
+    pill.innerHTML = pillHtml;
+  }
   drawChart();
 }
 
@@ -111,37 +145,35 @@ function renderMap(): void {
   const devs = snap.devices;
   const hubDev = devs.find((d) => d.isGateway) ?? null;
   const others = devs.filter((d) => d !== hubDev);
-  const sig = JSON.stringify([others.map((d) => [d.id, d.online, d.blocked, d.hostname, d.kind]), hubDev?.id, selected]);
   const detail = devs.find((d) => d.id === selected);
+  const sig = JSON.stringify([others.map((d) => [d.id, d.online, d.blocked, d.hostname, d.kind]), hubDev?.id, selected]);
   const dsig = JSON.stringify(detail ?? null);
+  const key = `map|${sig}|${dsig}`;
+  // On ne reconstruit la carte que si quelque chose a réellement changé :
+  // sinon les clics seraient perdus à chaque seconde.
+  if (mapKey === key) return;
+  mapKey = key;
 
-  if (renderKey !== `map|${sig}`) {
-    renderKey = `map|${sig}`;
-    const online = others.filter((d) => d.online);
-    const offline = others.filter((d) => !d.online);
-    const place = (list: Device[], r: number, off: number) => list.map((d, i) => {
-      const a = (i / Math.max(1, list.length)) * Math.PI * 2 - Math.PI / 2 + off;
-      return { d, x: 50 + Math.cos(a) * r * 0.9, y: 50 + Math.sin(a) * r };
-    });
-    const ring1 = place(online, 34, 0);
-    const ring2 = place(offline, 44, 0.4);
-    const all = [...ring1, ...ring2];
-    const links = all.map(({ d, x, y }) =>
-      `<line x1="50%" y1="50%" x2="${x}%" y2="${y}%" class="${!d.online ? 'off' : d.blocked ? 'blk' : ''}"/>`).join('');
-    const hubNode = hubDev
-      ? nodeHtml(hubDev, 50, 50, true)
-      : `<div class="node hub on" style="left:50%;top:50%;--c:#38bdf8"><span class="ico">${icon('router', 32)}</span><span class="lbl">Réseau</span></div>`;
+  const online = others.filter((d) => d.online);
+  const offline = others.filter((d) => !d.online);
+  const place = (list: Device[], r: number, off: number) => list.map((d, i) => {
+    const a = (i / Math.max(1, list.length)) * Math.PI * 2 - Math.PI / 2 + off;
+    return { d, x: 50 + Math.cos(a) * r * 0.9, y: 50 + Math.sin(a) * r };
+  });
+  const ring1 = place(online, 34, 0);
+  const ring2 = place(offline, 44, 0.4);
+  const all = [...ring1, ...ring2];
+  const links = all.map(({ d, x, y }) =>
+    `<line x1="50%" y1="50%" x2="${x}%" y2="${y}%" class="${!d.online ? 'off' : d.blocked ? 'blk' : ''}"/>`).join('');
+  const hubNode = hubDev
+    ? nodeHtml(hubDev, 50, 50, true)
+    : `<div class="node hub on" style="left:50%;top:50%;--c:#38bdf8"><span class="ico">${icon('router', 32)}</span><span class="lbl">Réseau</span></div>`;
 
-    $('view').innerHTML = `<div class="map-wrap">
-      <div><div class="map" id="map"><svg class="links">${links}</svg>${hubNode}${all.map(({ d, x, y }) => nodeHtml(d, x, y, false)).join('')}</div>
-        <div class="legend"><span><i style="background:var(--ok)"></i>En ligne</span><span><i style="background:#64748b"></i>Hors ligne</span><span><i style="background:var(--bad)"></i>Bloqué</span></div></div>
-      <aside class="panel detail" id="detail"></aside></div>`;
-    renderKey += `|${dsig}`;
-    $('detail').innerHTML = detailHtml(detail);
-  } else if (!renderKey.endsWith(`|${dsig}`)) {
-    renderKey = `map|${sig}|${dsig}`;
-    $('detail').innerHTML = detailHtml(detail);
-  }
+  $('view').innerHTML = `<div class="map-wrap">
+    <div class="map-col"><div class="map" id="map"><svg class="links">${links}</svg>${hubNode}${all.map(({ d, x, y }) => nodeHtml(d, x, y, false)).join('')}</div>
+      <div class="legend"><span><i style="background:var(--ok)"></i>En ligne</span><span><i style="background:#64748b"></i>Hors ligne</span><span><i style="background:var(--bad)"></i>Bloqué</span></div></div>
+    <aside class="panel detail" id="detail"></aside></div>`;
+  $('detail').innerHTML = detailHtml(detail);
 }
 
 function detailHtml(d?: Device): string {
@@ -222,8 +254,16 @@ let fwBuilt = false;
 function renderFirewall(): void {
   if (!snap) return;
   if (!fwBuilt || !document.getElementById('fw-list')) {
-    fwBuilt = true; renderKey = 'firewall';
-    $('view').innerHTML = `<div class="panel" id="fw-status"></div>
+    fwBuilt = true; renderKey = '';
+    $('view').innerHTML = `<div class="panel" id="fw-status">
+        <div class="row" style="align-items:center;flex-wrap:wrap">
+          <span id="fw-icon"></span>
+          <div class="grow"><b id="fw-title"></b> — moteur : <span class="mono" id="fw-engine"></span><br>
+            <span class="muted" id="fw-msg"></span><br><span class="muted tiny" id="fw-when"></span></div>
+          <button class="btn" data-preview></button>
+          <button class="btn primary" data-apply></button>
+          <button class="btn danger" data-flush></button>
+        </div></div>
       <div class="panel" style="margin-top:14px"><h2>Nouvelle règle</h2>
         <form class="form" id="rule-form">
           <label class="wide">Nom<input name="name" required placeholder="ex. Bloquer le partage Windows"></label>
@@ -233,17 +273,26 @@ function renderFirewall(): void {
           <label>Adresse ou réseau<input name="remote" placeholder="192.168.1.42 ou 10.0.0.0/8"></label>
           <label>Ports locaux<input name="localPorts" placeholder="445,139 ou 8000-8100"></label>
           <label>Programme (Windows)<input name="app" placeholder="C:\\Chemin\\app.exe"></label>
-          <div><button class="btn primary" type="submit">${icon('plus', 16)}Ajouter</button></div>
+          <div><button class="btn primary" type="submit"></button></div>
         </form></div>
       <div class="panel" style="margin-top:14px"><h2>Règles (<span id="fw-count">0</span>)</h2><div id="fw-list"></div></div>`;
+    const form = $('rule-form') as HTMLFormElement;
+    (form.querySelector('button[type="submit"]') as HTMLElement).innerHTML = `${icon('plus', 16)}Ajouter`;
+    (document.querySelector('[data-preview]') as HTMLElement).innerHTML = `${icon('eye', 16)}Aperçu des commandes`;
+    (document.querySelector('[data-apply]') as HTMLElement).innerHTML = `${icon('play', 16)}Appliquer`;
+    (document.querySelector('[data-flush]') as HTMLElement).innerHTML = `${icon('eraser', 16)}Tout retirer`;
   }
   const fw = snap.firewall;
-  $('fw-status').innerHTML = `<div class="row" style="align-items:center;flex-wrap:wrap">
-    <span style="color:${fw.readOnly ? 'var(--warn)' : 'var(--ok)'}">${icon(fw.readOnly ? 'shieldAlert' : 'shieldOk', 34)}</span>
-    <div class="grow"><b>${fw.readOnly ? 'Lecture seule' : 'Prêt à appliquer'}</b> — moteur : <span class="mono">${esc(fw.backend)}</span><br><span class="muted">${esc(fw.message)}</span>${fw.appliedAt ? `<br><span class="muted tiny">Dernière application ${ago(fw.appliedAt)}</span>` : ''}</div>
-    <button class="btn" data-preview>${icon('eye', 16)}Aperçu des commandes</button>
-    <button class="btn primary" data-apply>${icon('play', 16)}Appliquer</button>
-    <button class="btn danger" data-flush>${icon('eraser', 16)}Tout retirer</button></div>`;
+  const setText = (id: string, text: string) => {
+    const el = document.getElementById(id);
+    if (el && el.textContent !== text) el.textContent = text;
+  };
+  $('fw-icon').innerHTML = `<span style="color:${fw.readOnly ? 'var(--warn)' : 'var(--ok)'}">${icon(fw.readOnly ? 'shieldAlert' : 'shieldOk', 34)}</span>`;
+  setText('fw-title', fw.readOnly ? 'Lecture seule' : 'Prêt à appliquer');
+  setText('fw-engine', fw.backend);
+  setText('fw-msg', fw.message);
+  setText('fw-when', fw.appliedAt ? `Dernière application ${ago(fw.appliedAt)}` : '');
+
   const key = `fwlist|${JSON.stringify(rules)}`;
   if ($('fw-list').dataset.key === key) return;
   $('fw-list').dataset.key = key;
@@ -279,7 +328,7 @@ function render(): void {
 }
 
 function setView(v: ViewId): void {
-  view = v; renderKey = ''; fwBuilt = false; render();
+  view = v; renderKey = ''; mapKey = ''; fwBuilt = false; render();
 }
 
 let toastTimer = 0;
@@ -321,7 +370,7 @@ document.addEventListener('click', async (ev) => {
   const ds = el.dataset;
   try {
     if (ds.view) setView(ds.view as ViewId);
-    else if (ds.device) { selected = ds.device; renderKey = ''; render(); }
+    else if (ds.device) { selected = ds.device; mapKey = ''; render(); }
     else if (ds.block) {
       const d = snap?.devices.find((x) => x.id === ds.block);
       if (d?.ip) { await refreshRules(await api.setDeviceBlocked(d.ip, deviceName(d), ds.to === '1')); toast(ds.to === '1' ? 'Règle de blocage créée (à appliquer dans Pare-feu).' : 'Règle retirée.'); }

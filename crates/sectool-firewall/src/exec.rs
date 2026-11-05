@@ -95,7 +95,7 @@ pub async fn apply_windows(commands: &[String], elevated: bool) -> ApplyReport {
         Err(e) => return ApplyReport::failure("Impossible d'écrire le script", e.to_string()),
     };
 
-    let (ok, out) = if elevated {
+    let (_ok, out) = if elevated {
         run_program(
             "cmd.exe",
             &[

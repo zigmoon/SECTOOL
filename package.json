@@ -1,0 +1,17 @@
+{
+  "name": "sectool",
+  "private": true,
+  "version": "0.1.0",
+  "description": "SECTOOL — voir tout son réseau en temps réel et le contrôler",
+  "scripts": {
+    "app:dev": "npm --prefix app run dev",
+    "app:build": "npm --prefix app run build",
+    "app:install": "npm --prefix app install",
+    "tauri": "tauri",
+    "dev": "tauri dev",
+    "build": "tauri build"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.0.0"
+  }
+}
