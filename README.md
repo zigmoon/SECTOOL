@@ -2,6 +2,7 @@
 
 [![Build](https://github.com/zigmoon/SECTOOL/actions/workflows/release.yml/badge.svg)](https://github.com/zigmoon/SECTOOL/actions/workflows/release.yml)
 [![Version](https://img.shields.io/github/v/release/zigmoon/SECTOOL?display_name=tag&sort=semver)](https://github.com/zigmoon/SECTOOL/releases/latest)
+[![Téléchargements](https://img.shields.io/github/downloads/zigmoon/SECTOOL/total)](https://github.com/zigmoon/SECTOOL/releases/latest)
 [![Licence](https://img.shields.io/badge/licence-AGPL--3.0--or--later-blue)](LICENSE)
 
 **Voir tout son réseau en temps réel, et le contrôler.**
@@ -13,20 +14,21 @@ Rust pour le moteur, [Tauri 2](https://tauri.app) pour la fenêtre, [Astro](http
 
 ## Télécharger
 
-> Dernière version : **[github.com/zigmoon/SECTOOL/releases/latest](https://github.com/zigmoon/SECTOOL/releases/latest)**
+> Toutes les versions : **[github.com/zigmoon/SECTOOL/releases](https://github.com/zigmoon/SECTOOL/releases/latest)**
 
-| Système | Fichier à prendre | Téléchargement |
+| Système | Fichier | Téléchargement direct |
 |---|---|---|
-| **Windows** 10/11 (64 bits) | installateur `.msi` | [Télécharger](https://github.com/zigmoon/SECTOOL/releases/latest) |
-| **Windows** 10/11 (64 bits) | installateur `-setup.exe` | [Télécharger](https://github.com/zigmoon/SECTOOL/releases/latest) |
-| **macOS** 10.15+ (Intel et Apple Silicon) | `.dmg` universel | [Télécharger](https://github.com/zigmoon/SECTOOL/releases/latest) |
-| **Linux** Debian / Ubuntu | `.deb` | [Télécharger](https://github.com/zigmoon/SECTOOL/releases/latest) |
-| **Linux** toutes distributions | `.AppImage` | [Télécharger](https://github.com/zigmoon/SECTOOL/releases/latest) |
+| **Windows** 10/11 (64 bits) | `SECTOOL_0.1.0_x64-setup.exe` | **[Télécharger](https://github.com/zigmoon/SECTOOL/releases/download/v0.1.0/SECTOOL_0.1.0_x64-setup.exe)** |
+| **Windows** 10/11 (64 bits) | `SECTOOL_0.1.0_x64_en-US.msi` | **[Télécharger](https://github.com/zigmoon/SECTOOL/releases/download/v0.1.0/SECTOOL_0.1.0_x64_en-US.msi)** |
+| **macOS** 10.15+ (Intel + Apple Silicon) | `SECTOOL_0.1.0_universal.dmg` | **[Télécharger](https://github.com/zigmoon/SECTOOL/releases/download/v0.1.0/SECTOOL_0.1.0_universal.dmg)** |
+| **Linux** Debian / Ubuntu | `SECTOOL_0.1.0_amd64.deb` | **[Télécharger](https://github.com/zigmoon/SECTOOL/releases/download/v0.1.0/SECTOOL_0.1.0_amd64.deb)** |
+| **Linux** Fedora / openSUSE | `SECTOOL-0.1.0-1.x86_64.rpm` | **[Télécharger](https://github.com/zigmoon/SECTOOL/releases/download/v0.1.0/SECTOOL-0.1.0-1.x86_64.rpm)** |
+| **Linux** toutes distributions | `SECTOOL_0.1.0_amd64.AppImage` | **[Télécharger](https://github.com/zigmoon/SECTOOL/releases/download/v0.1.0/SECTOOL_0.1.0_amd64.AppImage)** |
 
-Les binaires sont construits automatiquement par GitHub Actions pour chaque système
-(voir [`.github/workflows/release.yml`](.github/workflows/release.yml)). Aucune signature
-commerciale n'est achetée : Windows SmartScreen et macOS Gatekeeper peuvent afficher un
-avertissement au premier lancement.
+Ces trois paquets sont réellement construits et testés par GitHub Actions à chaque tag
+(voir [le workflow](https://github.com/zigmoon/SECTOOL/actions/workflows/release.yml)) :
+Windows, macOS universel et Linux. Aucune signature commerciale n'est achetée : Windows
+SmartScreen et macOS Gatekeeper peuvent afficher un avertissement au premier lancement.
 
 ## Ce que fait SECTOOL
 
