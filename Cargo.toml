@@ -1,0 +1,44 @@
+[workspace]
+resolver = "2"
+members = [
+  "crates/sectool-core",
+  "crates/sectool-net",
+  "crates/sectool-firewall",
+  "crates/sectool-cli",
+  "src-tauri",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "AGPL-3.0-or-later"
+repository = "https://github.com/zigmoon/SECTOOL"
+authors = ["zigmoon"]
+
+[workspace.dependencies]
+sectool-core = { path = "crates/sectool-core" }
+sectool-net = { path = "crates/sectool-net" }
+sectool-firewall = { path = "crates/sectool-firewall" }
+
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+ipnet = "2"
+if-addrs = "0.13"
+tokio = { version = "1", features = [
+  "rt-multi-thread",
+  "macros",
+  "net",
+  "time",
+  "sync",
+  "process",
+  "io-util",
+  "fs",
+] }
+anyhow = "1"
+
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true

@@ -1,0 +1,13 @@
+[package]
+name = "sectool-firewall"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Pare-feu logiciel portable pour SECTOOL (netsh, nftables, pf)"
+
+[dependencies]
+sectool-core = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+ipnet = { workspace = true }
+tokio = { workspace = true }

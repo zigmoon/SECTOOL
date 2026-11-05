@@ -1,0 +1,17 @@
+[package]
+name = "sectool-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "SECTOOL en ligne de commande : balayage, sockets, pare-feu"
+
+[[bin]]
+name = "sectool"
+path = "src/main.rs"
+
+[dependencies]
+sectool-core = { workspace = true }
+sectool-net = { workspace = true }
+sectool-firewall = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true }

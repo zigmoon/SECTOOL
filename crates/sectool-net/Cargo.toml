@@ -1,0 +1,15 @@
+[package]
+name = "sectool-net"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Découverte du réseau local et surveillance des sockets pour SECTOOL"
+
+[dependencies]
+sectool-core = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+ipnet = { workspace = true }
+if-addrs = { workspace = true }
+tokio = { workspace = true }
+anyhow = { workspace = true }

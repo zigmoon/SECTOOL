@@ -1,0 +1,11 @@
+[package]
+name = "sectool-core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Types partagés, moteur de règles et base OUI de SECTOOL"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+ipnet = { workspace = true }

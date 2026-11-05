@@ -1,0 +1,204 @@
+SUPERPRINT — LICENSE
+Proprietary licence. All rights reserved.
+
+Copyright (c) 2026 Simon Dupont-Gellert (Zigmoon) & Clémence Brunet. Published by 2.13 — https://2points13.fr
+
+This file is the licence of SuperPrint: the page-layout editor, the SP213 AI layout
+studio, the SuperTyPo font editor, their source code (HTML, CSS, JavaScript, Rust,
+WebAssembly and assembly), their documentation, build tooling, templates, asset
+library and the native .sp project format. It applies to the current version of the
+software and to every later one.
+
+------------------------------------------------------------------------------
+IN PLAIN WORDS
+(This summary is not the licence; the terms and conditions below govern.)
+------------------------------------------------------------------------------
+
+You may:
+
+  * use SuperPrint, as it is served at https://superprint.cc and through the local
+    launcher published by the Licensor (`npx superprint`), for any purpose,
+    including commercial work, with no fee and no account;
+  * keep everything you produce with it. Your documents, images, fonts, templates
+    and your exported PDF, PNG and JPG files are yours: no obligation, no mention.
+
+You may not, without the Licensor's prior written permission:
+
+  * copy, redistribute, resell, sublicense, host, mirror or publish all or part of
+    the software, its templates or its asset library;
+  * modify it, or create derivative works from it;
+  * remove or alter the copyright notices, this licence or the credits;
+  * use the code, the templates or the asset library to build, train, fine-tune or
+    otherwise improve a competing product or an AI model.
+
+SuperPrint runs in a browser, so its code can be read. Readable is not free to
+reuse: this licence grants the use of the software, not rights over its source.
+
+Third-party components, the bundled fonts and the colour libraries keep their own
+licences and trademarks, which prevail over this one for the parts they cover.
+
+Commercial licensing, custom builds, white-labelling, self-hosting and
+partnerships: contact@superprint.cc · all@2points13.fr
+
+------------------------------------------------------------------------------
+TERMS AND CONDITIONS
+------------------------------------------------------------------------------
+
+1. DEFINITIONS
+
+   "Software" means SuperPrint in every form in which it is distributed: the
+   applications (the page-layout editor, the SP213 AI layout studio and the
+   SuperTyPo font editor), their source code in any language, their compiled
+   forms, their documentation, their build tooling, their templates, their asset
+   library and the native .sp project format.
+
+   "Licensor" means Simon Dupont-Gellert (Zigmoon) & Clémence Brunet, publisher 2.13, joint holders of
+   the rights over the Software.
+
+   "You" means the individual or legal entity exercising rights under this
+   licence, and any entity that controls, is controlled by, or is under common
+   control with that entity.
+
+   "Output" means the documents, images, fonts, templates and export files that
+   You create with the Software.
+
+2. GRANT — RIGHT TO USE
+
+   Subject to the terms below, the Licensor grants You a non-exclusive,
+   non-transferable, non-sublicensable, revocable, worldwide and royalty-free
+   right to USE the Software, as served at https://superprint.cc and through the
+   launcher distributed by the Licensor, for any purpose, including commercial
+   purposes, with no fee and no account.
+
+   This licence grants a right of USE. It grants no right of reproduction, of
+   representation, of adaptation or of distribution over the Software, and no
+   right of any kind over its source code, its templates or its asset library.
+   No right is granted by implication, by estoppel or otherwise.
+
+   Reading the source code, where it is delivered to the browser, results from
+   the technical nature of a web application. It is not a grant, and it confers
+   no right beyond the right of use defined above.
+
+3. YOUR OUTPUT
+
+   The Licensor claims no right over Your Output. Your documents, your images,
+   your fonts, your templates and your export files are yours, and You may use
+   them without restriction and without any obligation of mention.
+
+   You remain responsible for the rights over everything You place in the
+   Software: typefaces loaded into the font editor, imported images, imported
+   documents and colour libraries. Nothing in this licence transfers to You any
+   right over a third party's work.
+
+4. RESTRICTIONS
+
+   You shall not, and shall not permit anyone to:
+
+   (a) copy, reproduce, redistribute, resell, rent, lease, sublicense, publish,
+       mirror or host all or part of the Software, of its templates or of its
+       asset library, in any form, including as a service offered to third
+       parties;
+
+   (b) modify, translate, adapt, arrange or otherwise create derivative works
+       from the Software;
+
+   (c) decompile, disassemble or reverse-engineer the Software, except where such
+       an act is expressly permitted by an imperative provision of applicable
+       law, and only within the limits of that provision;
+
+   (d) remove, obscure or alter any copyright notice, this licence, the credits,
+       or any reference to the Licensor that the Software carries;
+
+   (e) extract, reuse or redistribute the templates, the asset library, the
+       colour libraries or the documentation as a separate body of material;
+
+   (f) present a derivative or a modified copy as being the Software, or in a way
+       that suggests an origin or an endorsement by the Licensor.
+
+5. MACHINE LEARNING AND AUTOMATED REUSE
+
+   You shall not use the Software, its source code, its templates, its
+   documentation or its asset library, in whole or in part, to develop, train,
+   fine-tune, evaluate, distil or otherwise improve any machine-learning model,
+   nor to constitute a corpus used for such purposes, nor to build a product or a
+   service intended to compete with the Software, without the Licensor's prior
+   written permission.
+
+6. THIRD-PARTY COMPONENTS, FONTS AND COLOUR LIBRARIES
+
+   The Software bundles third-party components — among them Fabric.js, pdf-lib,
+   pdf.js, JSZip, Mammoth, SheetJS, WebLLM and Little CMS (lcms-wasm) — as well
+   as fonts and colour-library names (Pantone, Toyo, Focoltone, HKS, RAL, NCS,
+   DIC). Those elements remain governed by their own licences and trademarks,
+   which prevail over this licence for the parts they cover. See the NOTICE files
+   shipped with the application.
+
+   The shade values shipped with the Software are indicative sRGB conversions,
+   and not the manufacturers' official libraries. A manufacturer's own .ase file
+   can be imported into the Software for exact values.
+
+7. NAMES AND TRADEMARKS
+
+   The names "SuperPrint", "SP213" and "SuperTyPo", the name "2.13", and their
+   logos, are trademarks of the Licensor, governed separately from this licence.
+   This licence grants no right to use them. Any public or commercial use of a
+   derivative work must not suggest an official origin or an endorsement by the
+   Licensor.
+
+8. FEEDBACK AND CONTRIBUTIONS
+
+   Any remark, suggestion, bug report or other feedback that You send to the
+   Licensor may be used by the Licensor without restriction and without
+   obligation of compensation, and does not transfer any right over the Software.
+
+9. TERMINATION
+
+   This licence is effective until terminated. It terminates automatically,
+   without notice, if You breach any of its terms. On termination, You must stop
+   using the Software and destroy every copy in Your possession or under Your
+   control. Clauses 3 (Your Output), 4 (Restrictions), 5 (Machine learning), 8
+   (Feedback), 10 (No warranty) and 11 (Limitation of liability) survive
+   termination.
+
+10. NO WARRANTY
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE, ACCURACY AND NON-INFRINGEMENT. THE LICENSOR
+    DOES NOT WARRANT THAT THE SOFTWARE WILL BE UNINTERRUPTED, ERROR-FREE OR FREE
+    OF DEFECTS, NOR THAT THE FILES IT PRODUCES WILL MEET ANY PARTICULAR
+    REQUIREMENT, INCLUDING THE REQUIREMENTS OF A GIVEN PRINTER, PRESS OR
+    PREPRESS WORKFLOW. YOU USE THE SOFTWARE AT YOUR OWN RISK.
+
+11. LIMITATION OF LIABILITY
+
+    TO THE FULLEST EXTENT PERMITTED BY APPLICABLE LAW, THE LICENSOR SHALL NOT BE
+    LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL OR PUNITIVE
+    DAMAGES, NOR FOR ANY LOSS OF PROFIT, OF REVENUE, OF DATA, OF PRODUCTION OR OF
+    CLIENTELE, ARISING OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THIS LICENCE,
+    EVEN IF THE LICENSOR HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. THE
+    LICENSOR'S TOTAL LIABILITY UNDER THIS LICENCE SHALL NOT EXCEED THE AMOUNT
+    ACTUALLY PAID BY YOU FOR THE SOFTWARE DURING THE TWELVE MONTHS PRECEDING THE
+    EVENT GIVING RISE TO LIABILITY.
+
+12. APPLICABLE LAW — JURISDICTION
+
+    This licence is governed by French law. Any dispute relating to its
+    interpretation or its performance falls to the competent courts of the
+    Licensor's domicile, subject to any imperative rule to the contrary.
+
+13. CONTACT
+
+    Commercial licensing, custom builds, white-labelling, self-hosting and
+    partnerships:
+      contact@superprint.cc
+      all@2points13.fr
+
+------------------------------------------------------------------------------
+VERSIONS PUBLISHED EARLIER
+------------------------------------------------------------------------------
+
+This licence applies to the current version of the Software and to every later
+one. For those versions, it does not withdraw the rights that were already
+granted, under the licence in force at the time, to anyone who received a copy of
+SuperPrint before this licence took effect.

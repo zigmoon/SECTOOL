@@ -1,0 +1,22 @@
+{
+  "name": "sectool-app",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Interface SECTOOL (Astro + Vite) — voir et contrôler son réseau",
+  "scripts": {
+    "dev": "astro dev --port 4321",
+    "build": "astro build",
+    "preview": "astro preview --port 4321",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2.0.0",
+    "astro": "^5.0.0",
+    "lucide": "^0.469.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "typescript": "^5.6.0"
+  }
+}

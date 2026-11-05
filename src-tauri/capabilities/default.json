@@ -1,0 +1,6 @@
+{
+  "identifier": "default",
+  "description": "Permissions minimales : aucune API système sensible n'est exposée au front-end.",
+  "windows": ["main"],
+  "permissions": ["core:default"]
+}
