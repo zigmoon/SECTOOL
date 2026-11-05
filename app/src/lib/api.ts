@@ -1,7 +1,7 @@
 // Passerelle vers Rust (Tauri) ou vers les données de démonstration.
 
 import type {
-  ActionResult, Alert, ApplyPlan, FirewallRule, RuleInput, Snapshot,
+  ActionResult, Alert, ApplyPlan, FirewallRule, RuleInput, Settings, Snapshot,
 } from './types';
 import { demoPlan, demoRules, demoSnapshot } from './demo';
 
@@ -16,6 +16,18 @@ async function invoke<T>(cmd: string, args?: Record<string, unknown>): Promise<T
 
 // État de la démo (règles modifiables en mémoire).
 let rulesDemo: FirewallRule[] = [...demoRules];
+
+export const defaultSettings: Settings = {
+  scanIntervalSecs: 5,
+  probeTimeoutMs: 350,
+  probePorts: [22, 53, 80, 443, 445, 554, 631, 1883, 3389, 5000, 5001, 8008, 8009, 8080, 9100, 32400, 62078],
+  enableMdns: true,
+  enableReverseDns: true,
+  enableArpSweep: true,
+  maxHosts: 512,
+  alertNewOutbound: false,
+  ui: { reduceMotion: false, showIpv6: false, showMap: true, theme: 'dark', soundEnabled: true },
+};
 
 export async function onSnapshot(cb: (s: Snapshot) => void): Promise<Unlisten> {
   if (isTauri) {
@@ -87,6 +99,16 @@ export const api = {
   },
 
   clearAlerts: () => (isTauri ? invoke<void>('clear_alerts') : Promise.resolve()),
+
+  settings: async (): Promise<Settings> => {
+    if (!isTauri) return defaultSettings;
+    try { return await invoke<Settings>('get_settings'); } catch { return defaultSettings; }
+  },
+
+  saveSettings: async (settings: Settings): Promise<void> => {
+    if (!isTauri) return;
+    try { await invoke('save_settings_cmd', { settings }); } catch { /* préférence locale seulement */ }
+  },
 
   exportReport: async (): Promise<string> => {
     if (isTauri) return invoke('export_report');

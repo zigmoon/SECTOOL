@@ -5,7 +5,8 @@ import {
   Speaker, Gamepad2, HardDrive, Cpu, Server, CircleHelp, Activity, Shield, ShieldCheck,
   ShieldAlert, ShieldOff, Network, List, Bell, Settings, RefreshCw, Download, Plus,
   Trash2, Ban, CircleCheck, ArrowDown, ArrowUp, Globe, Wifi, X, TriangleAlert, Info,
-  Play, Eraser, Search, Eye,
+  Play, Eraser, Search, Eye, LayoutDashboard, Sun, Moon, Maximize, Minimize, Volume2,
+  VolumeX, Zap, ChevronRight, Signal, Timer, Radio,
 } from 'lucide';
 
 const ICONS = {
@@ -17,6 +18,9 @@ const ICONS = {
   refresh: RefreshCw, download: Download, plus: Plus, trash: Trash2, ban: Ban,
   check: CircleCheck, down: ArrowDown, up: ArrowUp, globe: Globe, wifi: Wifi, close: X,
   warn: TriangleAlert, info: Info, play: Play, eraser: Eraser, search: Search, eye: Eye,
+  dashboard: LayoutDashboard, sun: Sun, moon: Moon, fullscreen: Maximize,
+  exitFullscreen: Minimize, sound: Volume2, mute: VolumeX, zap: Zap,
+  chevron: ChevronRight, signal: Signal, timer: Timer, radio: Radio,
 } as const;
 
 export type IconName = keyof typeof ICONS;

@@ -1,7 +1,7 @@
 {
   "name": "sectool",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "SECTOOL — voir tout son réseau en temps réel et le contrôler",
   "scripts": {
     "app:dev": "npm --prefix app run dev",

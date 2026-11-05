@@ -56,7 +56,7 @@ export function demoSnapshot(rules: FirewallRule[]): Snapshot {
   const devices = demoDevices.map((d) => ({ ...d, blocked: !!d.ip && blockedIps.has(d.ip) }));
   const connections = demoConnections();
   return {
-    ts: now(), version: '0.1.0', platform: 'windows', hostname: 'Bureau-PC', isElevated: false, scanning: false,
+    ts: now(), version: '0.2.0', platform: 'windows', hostname: 'Bureau-PC', isElevated: false, scanning: false,
     lastScanMs: 1840, lastScanAt: now() - 2000, gateway: '192.168.1.1', localIp: '192.168.1.4',
     interfaces: [{ name: 'Ethernet', mac: 'a4:83:e7:11:22:33', ipv4: ['192.168.1.4'], subnet: '192.168.1.0/24', isUp: true, isDefault: true }],
     devices, connections,
@@ -65,7 +65,14 @@ export function demoSnapshot(rules: FirewallRule[]): Snapshot {
       { id: 'a2', ts: now() - 900_000, level: 'warn', kind: 'device_offline', title: 'Appareil hors ligne', detail: '192.168.1.88 ne répond plus.' },
     ],
     firewall: { supported: true, elevated: false, backend: 'windows', activeRules: rules.filter((r) => r.enabled).length, message: 'Mode lecture seule : lancez SECTOOL en administrateur pour appliquer les règles.', readOnly: true },
-    traffic: { rxBps: rx, txBps: tx, history: [...hist] },
+    traffic: {
+      rxBps: rx, txBps: tx, history: [...hist],
+      interfaces: [
+        { name: 'Ethernet', rxBps: rx, txBps: tx, rxTotal: 0, txTotal: 0 },
+        { name: 'Wi-Fi', rxBps: Math.round(rx * 0.18), txBps: Math.round(tx * 0.22), rxTotal: 0, txTotal: 0 },
+        { name: 'Loopback', rxBps: 1200, txBps: 1200, rxTotal: 0, txTotal: 0 },
+      ],
+    },
     stats: {
       devices: devices.length, devicesOnline: devices.filter((d) => d.online).length,
       connections: connections.length, connectionsInternet: connections.filter((c) => c.scope === 'internet').length,

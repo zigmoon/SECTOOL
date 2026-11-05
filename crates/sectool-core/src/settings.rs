@@ -82,6 +82,16 @@ pub struct UiSettings {
     /// Carte du réseau ou liste compacte au démarrage.
     #[serde(default = "d_true")]
     pub show_map: bool,
+    /// Thème de l'interface : `dark` ou `light`.
+    #[serde(default = "d_theme")]
+    pub theme: String,
+    /// Bip sonore à chaque alerte importante.
+    #[serde(default = "d_true")]
+    pub sound_enabled: bool,
+}
+
+fn d_theme() -> String {
+    "dark".to_string()
 }
 
 impl Default for UiSettings {
@@ -90,6 +100,8 @@ impl Default for UiSettings {
             reduce_motion: false,
             show_ipv6: false,
             show_map: true,
+            theme: d_theme(),
+            sound_enabled: true,
         }
     }
 }

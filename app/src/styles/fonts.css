@@ -1,0 +1,19 @@
+/* Polices locales, aucune requête réseau au démarrage.
+   Space Grotesk et JetBrains Mono sont distribuées sous SIL Open Font
+   License 1.1 — voir public/fonts/OFL-*.txt. */
+
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('/fonts/space-grotesk.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('/fonts/jetbrains-mono.woff2') format('woff2');
+}

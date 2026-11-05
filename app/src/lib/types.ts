@@ -106,7 +106,12 @@ export interface Snapshot {
   connections: Connection[];
   alerts: Alert[];
   firewall: FirewallStatus;
-  traffic: { rxBps: number; txBps: number; history: TrafficPoint[] };
+  traffic: {
+    rxBps: number;
+    txBps: number;
+    history: TrafficPoint[];
+    interfaces?: { name: string; rxBps: number; txBps: number; rxTotal: number; txTotal: number }[];
+  };
   stats: {
     devices: number; devicesOnline: number; connections: number;
     connectionsInternet: number; listening: number; alerts: number;
@@ -144,4 +149,41 @@ export interface RuleInput {
   note?: string;
   enabled: boolean;
   auto?: boolean;
+}
+
+export type Theme = 'dark' | 'light';
+
+export interface UiSettings {
+  reduceMotion: boolean;
+  showIpv6: boolean;
+  showMap: boolean;
+  theme: Theme;
+  soundEnabled: boolean;
+}
+
+export interface Settings {
+  scanIntervalSecs: number;
+  probeTimeoutMs: number;
+  probePorts: number[];
+  enableMdns: boolean;
+  enableReverseDns: boolean;
+  enableArpSweep: boolean;
+  maxHosts: number;
+  alertNewOutbound: boolean;
+  subnetOverride?: string;
+  ui: UiSettings;
+}
+
+/** Un motif expliquant l'état du réseau, affiché sous l'orbe de statut. */
+export interface HealthIssue {
+  level: 'bad' | 'warn';
+  title: string;
+  detail: string;
+}
+
+export interface Health {
+  state: 'ok' | 'warn' | 'bad';
+  label: string;
+  summary: string;
+  issues: HealthIssue[];
 }

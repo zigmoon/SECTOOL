@@ -2,43 +2,62 @@
 import '../styles/app.css';
 ---
 <!doctype html>
-<html lang="fr">
+<html lang="fr" data-theme="dark">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="color-scheme" content="dark" />
+    <meta name="color-scheme" content="dark light" />
     <title>SECTOOL — Réseau &amp; Pare-feu</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script is:inline>
+      // Applique le thème avant le premier rendu pour éviter un flash.
+      try {
+        const saved = localStorage.getItem('sectool-theme');
+        if (saved === 'light' || saved === 'dark') {
+          document.documentElement.dataset.theme = saved;
+        } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+          document.documentElement.dataset.theme = 'light';
+        }
+      } catch {}
+    </script>
   </head>
   <body>
     <div class="app">
       <aside class="side">
         <div class="brand">
           <img src="/favicon.svg" alt="" width="34" height="34" />
-          <div><strong>SECTOOL</strong><small id="ver">v0.1.0</small></div>
+          <div><strong>SECTOOL</strong><small id="ver">v0.2.0</small></div>
         </div>
+
         <nav id="nav" aria-label="Sections"></nav>
+
         <div class="side-foot">
-          <div class="pill" id="fw-pill"></div>
-          <div class="muted tiny" id="host"></div>
+          <div class="tools">
+            <button class="tool" id="btn-theme" type="button" aria-label="Changer de thème"></button>
+            <button class="tool" id="btn-sound" type="button" aria-label="Alertes sonores"></button>
+            <button class="tool" id="btn-fullscreen" type="button" aria-label="Plein écran"></button>
+          </div>
+          <div class="side-note" id="host"></div>
         </div>
       </aside>
 
       <main class="main">
-        <div id="demo-banner" class="banner" hidden>
-          Mode démonstration : données fictives affichées dans le navigateur. Lancez l'application de bureau pour voir votre vrai réseau.
-        </div>
-
-        <header class="top">
-          <div class="stats" id="stats"></div>
-          <div class="traffic">
-            <div class="traffic-head">
-              <span class="rx" id="rx"></span><span class="tx" id="tx"></span>
-              <button class="btn ghost" id="btn-scan" title="Relancer un balayage"></button>
-            </div>
-            <canvas id="chart" width="520" height="86" aria-label="Débit réseau en temps réel"></canvas>
+        <header class="topbar">
+          <div class="headline">
+            <h1 id="page-title">Tableau de bord</h1>
+            <div class="sub" id="page-sub">Surveillance du réseau local</div>
+          </div>
+          <div class="spacer"></div>
+          <div class="actions">
+            <div class="pill" id="fw-pill"></div>
+            <button class="icon-btn" id="btn-scan" type="button" title="Relancer un balayage"></button>
           </div>
         </header>
+
+        <div id="demo-banner" class="banner" hidden>
+          Mode démonstration : données fictives affichées dans le navigateur. Lancez l'application de
+          bureau pour voir votre vrai réseau.
+        </div>
 
         <section id="view" class="view" aria-live="polite"></section>
       </main>
